@@ -29,6 +29,14 @@ config ARCH_RHEA
 	select HAVE_PWM
 	help
 	  Support for the Broadcom Rhea SoC platform.
+	  
+config HAVE_END_MEM
+        bool "Specify highest physical RAM address at compile time"
+
+config END_MEM
+        hex "Highest physical address where system RAM resides"
+        depends on HAVE_END_MEM
+ 
 
 endchoice
 
