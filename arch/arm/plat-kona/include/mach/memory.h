@@ -17,6 +17,10 @@
 
 #include <mach/io.h>
 
+#ifdef CONFIG_HAVE_END_MEM
+#define END_MEM UL(CONFIG_END_MEM)
+#endif
+
 /* APB5, APB9 and SRAM */
 #define IO_APB_G1_PHYS        0x34000000
 #define IO_APB_G1_VIRT        IOMEM(0xFD800000)
