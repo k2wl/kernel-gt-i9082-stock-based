@@ -48,7 +48,7 @@ cmp_battery-objs += cmp_battery_multi.o
 endif
 ifeq ($(CONFIG_BCM_CMP_BATTERY_BQ24616),m)
 obj-m += cmp_battery.o
-cmp_battery-objs += cmp_battery_bq24616.o
+cmp_battery-objs += cmp_battery_bq24616.o charge_current.o
 endif
 obj-$(CONFIG_POWER_BCMPMU)	+= bcmpmu-batt.o
 obj-$(CONFIG_CHARGER_BCMPMU)	+= bcmpmu-chrgr.o
