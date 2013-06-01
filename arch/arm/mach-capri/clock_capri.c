@@ -6603,7 +6603,7 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 			clk_dbg("%s: FID ==7\n", __func__);
 
 			if (target_opp_inx == PI_PROC_OPP_TURBO) {
-				clk_dbg("%s: 1200M\n", __func__);
+				clk_dbg("%s: 1456M\n", __func__);
 
 				reg_val = readl(CCU_POLICY_FREQ_REG(ccu_clk));
 				reg_val &= ~(CCU_FREQ_POLICY_MASK << shift);
@@ -6612,7 +6612,25 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 				ccu_policy_engine_stop(ccu_clk);
 				writel(reg_val, CCU_POLICY_FREQ_REG(ccu_clk));
 				ccu_clk_set_voltage(ccu_clk, kproc_fid7,
-						    a9_voltage[7]);
+						    a9_voltage[5]);
+				__proc_clk_set_pll1_div(ccu_clk->
+							ccu_clk_mgr_base, 2);
+				ccu_policy_engine_resume(ccu_clk,
+							 ccu_clk->clk.
+							 flags & CCU_TARGET_LOAD
+							 ? CCU_LOAD_TARGET :
+							 CCU_LOAD_ACTIVE);
+                         } else if (target_opp_inx == PI_PROC_OPP_TURBO) {
+				clk_dbg("%s: 1378M\n", __func__);
+
+				reg_val = readl(CCU_POLICY_FREQ_REG(ccu_clk));
+				reg_val &= ~(CCU_FREQ_POLICY_MASK << shift);
+				/*freq_id 7 write to register */
+				reg_val |= target_freq_id << shift;
+				ccu_policy_engine_stop(ccu_clk);
+				writel(reg_val, CCU_POLICY_FREQ_REG(ccu_clk));
+				ccu_clk_set_voltage(ccu_clk, kproc_fid7,
+						    a9_voltage[5]);
 				__proc_clk_set_pll1_div(ccu_clk->
 							ccu_clk_mgr_base, 2);
 				ccu_policy_engine_resume(ccu_clk,
@@ -6621,7 +6639,25 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 							 ? CCU_LOAD_TARGET :
 							 CCU_LOAD_ACTIVE);
 			} else if (target_opp_inx == PI_PROC_OPP_TURBO1) {
-				clk_dbg("%s: 800M\n", __func__);
+				clk_dbg("%s: 1274M\n", __func__);
+
+				reg_val = readl(CCU_POLICY_FREQ_REG(ccu_clk));
+				reg_val &= ~(CCU_FREQ_POLICY_MASK << shift);
+				/*freq_id 6 write to register */
+				reg_val |= target_freq_id << shift;
+				ccu_policy_engine_stop(ccu_clk);
+				writel(reg_val, CCU_POLICY_FREQ_REG(ccu_clk));
+				ccu_clk_set_voltage(ccu_clk, kproc_fid7,
+						    a9_voltage[4]);
+				__proc_clk_set_pll1_div(ccu_clk->
+							ccu_clk_mgr_base, 3);
+				ccu_policy_engine_resume(ccu_clk,
+							 ccu_clk->clk.
+							 flags & CCU_TARGET_LOAD
+							 ? CCU_LOAD_TARGET :
+							 CCU_LOAD_ACTIVE);
+			} else if (target_opp_inx == PI_PROC_OPP_TURBO1) {
+				clk_dbg("%s: 936M\n", __func__);
 
 				reg_val = readl(CCU_POLICY_FREQ_REG(ccu_clk));
 				reg_val &= ~(CCU_FREQ_POLICY_MASK << shift);
@@ -6632,14 +6668,14 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 				ccu_clk_set_voltage(ccu_clk, kproc_fid7,
 						    a9_voltage[6]);
 				__proc_clk_set_pll1_div(ccu_clk->
-							ccu_clk_mgr_base, 3);
+							ccu_clk_mgr_base, 4);
 				ccu_policy_engine_resume(ccu_clk,
 							 ccu_clk->clk.
 							 flags & CCU_TARGET_LOAD
 							 ? CCU_LOAD_TARGET :
 							 CCU_LOAD_ACTIVE);
 			} else {
-				clk_dbg("%s: 600M\n", __func__);
+				clk_dbg("%s: 624M\n", __func__);
 				reg_val = readl(CCU_POLICY_FREQ_REG(ccu_clk));
 				reg_val &= ~(CCU_FREQ_POLICY_MASK << shift);
 				/*freq_id 7 write to register */
@@ -6649,7 +6685,7 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 				ccu_clk_set_voltage(ccu_clk, kproc_fid7,
 						    a9_voltage[5]);
 				__proc_clk_set_pll1_div(ccu_clk->
-							ccu_clk_mgr_base, 4);
+							ccu_clk_mgr_base, 5);
 				ccu_policy_engine_resume(ccu_clk,
 							 ccu_clk->clk.
 							 flags & CCU_TARGET_LOAD
@@ -6745,23 +6781,23 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 				ccu_policy_engine_stop(ccu_clk);
 
 				if (target_opp_inx == PI_PROC_OPP_NORMAL) {
-					clk_dbg("%s: 600M\n", __func__);
+					clk_dbg("%s: 936M\n", __func__);
 					ccu_clk_set_voltage(ccu_clk, kproc_fid7,
 							    a9_voltage[5]);
 					__proc_clk_set_pll1_div(ccu_clk->
 								ccu_clk_mgr_base,
 								4);
 				} else if (target_opp_inx == PI_PROC_OPP_TURBO1) {
-					clk_dbg("%s: 800M\n", __func__);
+					clk_dbg("%s: 1274M\n", __func__);
 					ccu_clk_set_voltage(ccu_clk, kproc_fid7,
 							    a9_voltage[6]);
 					__proc_clk_set_pll1_div(ccu_clk->
 								ccu_clk_mgr_base,
 								3);
 				} else {
-					clk_dbg("%s: 1200M\n", __func__);
+					clk_dbg("%s: 1378M\n", __func__);
 					ccu_clk_set_voltage(ccu_clk, kproc_fid7,
-							    a9_voltage[7]);
+							    a9_voltage[6]);
 					__proc_clk_set_pll1_div(ccu_clk->
 								ccu_clk_mgr_base,
 								2);
@@ -6869,7 +6905,7 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 		case kproc_fid6:
 
 			if (target_opp_inx == PI_PROC_OPP_TURBO1) {
-				clk_dbg("%s: 800M\n", __func__);
+				clk_dbg("%s: 936M\n", __func__);
 
 				reg_val = readl(CCU_POLICY_FREQ_REG(ccu_clk));
 				reg_val &= ~(CCU_FREQ_POLICY_MASK << shift);
@@ -6887,7 +6923,7 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 							 ? CCU_LOAD_TARGET :
 							 CCU_LOAD_ACTIVE);
 			} else {
-				clk_dbg("%s: 600M\n", __func__);
+				clk_dbg("%s: 624M\n", __func__);
 				reg_val = readl(CCU_POLICY_FREQ_REG(ccu_clk));
 				reg_val &= ~(CCU_FREQ_POLICY_MASK << shift);
 				/*freq_id 6 write to register */
@@ -7002,14 +7038,14 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 				ccu_policy_engine_stop(ccu_clk);
 
 				if (target_opp_inx == PI_PROC_OPP_NORMAL) {
-					clk_dbg("%s: 600M\n", __func__);
+					clk_dbg("%s: 624M\n", __func__);
 					ccu_clk_set_voltage(ccu_clk, kproc_fid6,
 							    a9_voltage[5]);
 					__proc_clk_set_pll0_div(ccu_clk->
 								ccu_clk_mgr_base,
 								4);
 				} else {
-					clk_dbg("%s: 800M\n", __func__);
+					clk_dbg("%s: 936M\n", __func__);
 					ccu_clk_set_voltage(ccu_clk, kproc_fid6,
 							    a9_voltage[6]);
 					__proc_clk_set_pll0_div(ccu_clk->
@@ -7081,13 +7117,13 @@ static int kproc_ccu_set_freq_policy(struct ccu_clk *ccu_clk,
 			ccu_policy_engine_stop(ccu_clk);
 			writel(reg_val, CCU_POLICY_FREQ_REG(ccu_clk));
 			if (target_opp_inx == PI_PROC_OPP_NORMAL) {
-				clk_dbg("%s: 600M\n", __func__);
+				clk_dbg("%s: 624M\n", __func__);
 				ccu_clk_set_voltage(ccu_clk, kproc_fid6,
 						    a9_voltage[5]);
 				__proc_clk_set_pll0_div(ccu_clk->
 							ccu_clk_mgr_base, 4);
 			} else {
-				clk_dbg("%s: 800M\n", __func__);
+				clk_dbg("%s: 936M\n", __func__);
 				ccu_clk_set_voltage(ccu_clk, kproc_fid6,
 						    a9_voltage[6]);
 				__proc_clk_set_pll0_div(ccu_clk->
@@ -7254,8 +7290,9 @@ static struct __init clk_lookup capri_clk_tbl[] = {
 	BRCM_REGISTER_CLK(DIG_CH1_PERI_CLK_NAME_STR, NULL, dig_ch1),
 	BRCM_REGISTER_CLK(DIG_CH2_PERI_CLK_NAME_STR, NULL, dig_ch2),
 	BRCM_REGISTER_CLK(DIG_CH3_PERI_CLK_NAME_STR, NULL, dig_ch3),
-	/*ref_312m clock should be the last clock to be auto gated in root CCU */
 	BRCM_REGISTER_CLK(REF_312M_REF_CLK_NAME_STR, NULL, ref_312m),
+        BRCM_REGISTER_CLK(REF_156M_REF_CLK_NAME_STR, NULL, ref_156m),
+        /*ref_156m clock should be the last clock to be auto gated in root CCU */
 	 /*AON*/ BRCM_REGISTER_CLK(DFT_19_5M_REF_CLK_NAME_STR, NULL, dft_19_5m),
 	BRCM_REGISTER_CLK(REF_CX40_VARVDD_REF_CLK_NAME_STR, NULL,
 			  ref_cx40_varvdd),

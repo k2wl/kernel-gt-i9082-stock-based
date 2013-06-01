@@ -83,4 +83,4 @@ obj-$(CONFIG_BCM_BT_GPS_SELFTEST) += bcmbt_gps_test.o
 obj-$(CONFIG_BCM_VC_SERVICES) += vc04_services/
 obj-$(CONFIG_BRCM_EMMC_RPMB)	+= emmc_rpmb/
 obj-$(CONFIG_SEC_MODEM)		+= modem_if/
-obj-$(CONFIG_GENERIC_BLN)  += bln.o 
+#obj-$(CONFIG_FSYNC_CONTROL)  += fsync_control.o 

@@ -133,6 +133,25 @@ static int padzero(unsigned long elf_bss)
 #define ELF_BASE_PLATFORM NULL
 #endif
 
+/*
+ * Use get_random_int() to implement AT_RANDOM while avoiding depletion
+ * of the entropy pool.
+ */
+static void get_atrandom_bytes(unsigned char *buf, size_t nbytes)
+{
+	unsigned char *p = buf;
+
+	while (nbytes) {
+		unsigned int random_variable;
+		size_t chunk = min(nbytes, sizeof(random_variable));
+
+		random_variable = get_random_int();
+		memcpy(p, &random_variable, chunk);
+		p += chunk;
+		nbytes -= chunk;
+	}
+}
+
 static int
 create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
 		unsigned long load_addr, unsigned long interp_load_addr)
@@ -194,7 +213,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
 	/*
 	 * Generate 16 random bytes for userspace PRNG seeding.
 	 */
-	get_random_bytes(k_rand_bytes, sizeof(k_rand_bytes));
+	get_atrandom_bytes(k_rand_bytes, sizeof(k_rand_bytes));
 	u_rand_bytes = (elf_addr_t __user *)
 		       STACK_ALLOC(p, sizeof(k_rand_bytes));
 	if (__copy_to_user(u_rand_bytes, k_rand_bytes, sizeof(k_rand_bytes)))
@@ -1422,7 +1441,7 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
 	for (i = 1; i < view->n; ++i) {
 		const struct user_regset *regset = &view->regsets[i];
 		do_thread_regset_writeback(t->task, regset);
-		if (regset->core_note_type && regset->get &&
+		if (regset->core_note_type &&
 		    (!regset->active || regset->active(t->task, regset))) {
 			int ret;
 			size_t size = regset->n * regset->size;
@@ -1896,6 +1915,8 @@ static int elf_core_dump(struct coredump_params *cprm)
 	Elf_Half e_phnum;
 	elf_addr_t e_shoff;
 
+	printk(KERN_DEBUG "coredump(%d): start\n", current->pid);
+
 	/*
 	 * We no longer stop all VM operations.
 	 * 
@@ -2025,6 +2046,8 @@ static int elf_core_dump(struct coredump_params *cprm)
 	if (!dump_seek(cprm->file, dataoff - foffset))
 		goto end_coredump;
 
+	printk(KERN_DEBUG "coredump(%d): write output program header/notes\n", current->pid);
+
 	for (vma = first_vma(current, gate_vma); vma != NULL;
 			vma = next_vma(vma, gate_vma)) {
 		unsigned long addr;
@@ -2032,6 +2055,7 @@ static int elf_core_dump(struct coredump_params *cprm)
 
 		end = vma->vm_start + vma_dump_size(vma, cprm->mm_flags);
 
+		printk(KERN_DEBUG "coredump(%d): write out load vm start:%08lx, end:%08lx\n", current->pid, vma->vm_start, end);
 		for (addr = vma->vm_start; addr < end; addr += PAGE_SIZE) {
 			struct page *page;
 			int stop;
@@ -2044,12 +2068,21 @@ static int elf_core_dump(struct coredump_params *cprm)
 						    PAGE_SIZE);
 				kunmap(page);
 				page_cache_release(page);
-			} else
+				if (stop) {
+					printk(KERN_DEBUG "coredump(%d): failed to write core dump\n", current->pid);
+				}
+			} else {
 				stop = !dump_seek(cprm->file, PAGE_SIZE);
+				if (stop) {
+					printk(KERN_DEBUG "coredump(%d): failed to seek core dump\n", current->pid);
+				}
+			}
 			if (stop)
 				goto end_coredump;
 		}
 	}
+
+	printk(KERN_DEBUG "coredump(%d): write loads\n", current->pid);
 
 	if (!elf_core_write_extra_data(cprm->file, &size, cprm->limit))
 		goto end_coredump;
@@ -2061,6 +2094,8 @@ static int elf_core_dump(struct coredump_params *cprm)
 				   sizeof(*shdr4extnum)))
 			goto end_coredump;
 	}
+
+	printk(KERN_DEBUG "coredump(%d): write out completed %lld\n", current->pid, offset);
 
 end_coredump:
 	set_fs(fs);

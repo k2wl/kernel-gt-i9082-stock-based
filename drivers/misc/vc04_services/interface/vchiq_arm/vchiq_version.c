@@ -2,7 +2,7 @@
 #include <linux/broadcom/vc_debug_sym.h>
 
 VC_DEBUG_DECLARE_STRING_VAR( vchiq_build_hostname, "janeman-desktop" );
-VC_DEBUG_DECLARE_STRING_VAR( vchiq_build_version, " (tainted)" );
+VC_DEBUG_DECLARE_STRING_VAR( vchiq_build_version, "84bc14acdeaeee269f29f508c2489218c47f58ba (tainted)" );
 VC_DEBUG_DECLARE_STRING_VAR( vchiq_build_time,    __TIME__ );
 VC_DEBUG_DECLARE_STRING_VAR( vchiq_build_date,    __DATE__ );
 

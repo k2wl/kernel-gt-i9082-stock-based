@@ -141,6 +141,9 @@ enum zone_stat_item {
 	NUMA_OTHER,		/* allocation from other node */
 #endif
 	NR_ANON_TRANSPARENT_HUGEPAGES,
+#ifdef CONFIG_UKSM
+        NR_UKSM_ZERO_PAGES,
+#endif 
 	NR_VM_ZONE_STAT_ITEMS };
 
 /*
@@ -372,7 +375,7 @@ struct zone {
 	ZONE_PADDING(_pad1_)
 
 	/* Fields commonly accessed by the page reclaim scanner */
-	spinlock_t		lru_lock;	
+	spinlock_t		lru_lock;
 	struct zone_lru {
 		struct list_head list;
 	} lru[NR_LRU_LISTS];
