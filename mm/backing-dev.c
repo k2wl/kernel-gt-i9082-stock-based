@@ -1,4 +1,3 @@
-
 #include <linux/wait.h>
 #include <linux/backing-dev.h>
 #include <linux/kthread.h>
@@ -258,7 +257,8 @@ static void bdi_flush_io(struct backing_dev_info *bdi)
 		.nr_to_write		= 1024,
 	};
 
-	writeback_inodes_wb(&bdi->wb, &wbc);
+	writeback_inodes_wb(&bdi->wb, &wbc,
+	        WB_REASON_FORKER_THREAD);
 }
 
 /*
