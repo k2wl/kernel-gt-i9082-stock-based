@@ -21,6 +21,7 @@ DECLARE_EVENT_CLASS(writeback_work_class,
 		__field(int, for_kupdate)
 		__field(int, range_cyclic)
 		__field(int, for_background)
+		__field(int, reason) 
 	),
 	TP_fast_assign(
 		struct device *dev = bdi->dev;
@@ -33,17 +34,19 @@ DECLARE_EVENT_CLASS(writeback_work_class,
 		__entry->for_kupdate = work->for_kupdate;
 		__entry->range_cyclic = work->range_cyclic;
 		__entry->for_background	= work->for_background;
+		__entry->reason = work->reason;
 	),
 	TP_printk("bdi %s: sb_dev %d:%d nr_pages=%ld sync_mode=%d "
-		  "kupdate=%d range_cyclic=%d background=%d",
+		  "kupdate=%d range_cyclic=%d background=%d reason=%s",
 		  __entry->name,
 		  MAJOR(__entry->sb_dev), MINOR(__entry->sb_dev),
 		  __entry->nr_pages,
 		  __entry->sync_mode,
 		  __entry->for_kupdate,
 		  __entry->range_cyclic,
-		  __entry->for_background
-	)
+		  __entry->for_background,
+                  wb_reason_name[__entry->reason] 
+   )
 );
 #define DEFINE_WRITEBACK_WORK_EVENT(name) \
 DEFINE_EVENT(writeback_work_class, name, \
@@ -108,6 +111,7 @@ DECLARE_EVENT_CLASS(wbc_class,
 		__field(unsigned long, older_than_this)
 		__field(long, range_start)
 		__field(long, range_end)
+		__field(int,    reason)
 	),
 
 	TP_fast_assign(
@@ -124,11 +128,12 @@ DECLARE_EVENT_CLASS(wbc_class,
 						*wbc->older_than_this : 0;
 		__entry->range_start	= (long)wbc->range_start;
 		__entry->range_end	= (long)wbc->range_end;
+		__entry->reason  = work->reason;
 	),
 
 	TP_printk("bdi %s: towrt=%ld skip=%ld mode=%d kupd=%d "
 		"bgrd=%d reclm=%d cyclic=%d more=%d older=0x%lx "
-		"start=0x%lx end=0x%lx",
+		"start=0x%lx end=0x%lx reason=%s",
 		__entry->name,
 		__entry->nr_to_write,
 		__entry->pages_skipped,
@@ -140,7 +145,8 @@ DECLARE_EVENT_CLASS(wbc_class,
 		__entry->more_io,
 		__entry->older_than_this,
 		__entry->range_start,
-		__entry->range_end)
+		__entry->range_end,
+		wb_reason_name[__entry->reason])
 )
 
 #define DEFINE_WBC_EVENT(name) \
